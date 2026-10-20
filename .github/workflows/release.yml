@@ -1,0 +1,38 @@
+name: Release
+
+# A published release (ghrelease tags a merged, green commit of main) gets
+# the .vsix built from its tag attached. Publishing to the VS Code
+# Marketplace and Open VSX is not done here: it needs the publisher's
+# tokens (see the README).
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+env:
+  GOWORK: "off"
+
+jobs:
+  vsix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.27.2"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.20.0"
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Package
+        run: npm run package
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" ./*.vsix --clobber
