@@ -3,6 +3,7 @@
 Preview, check, complete and export [go-slides](https://github.com/go-slides/slides) decks in VS Code — Marp Markdown plus Go templates, slide kinds and HCL front matter — the way [Marp for VS Code](https://github.com/marp-team/marp-vscode) does for Marp, without Chrome.
 
 - **Preview** in VS Code's own Markdown preview, rendered by go-slides compiled to WebAssembly: nothing to install, and it works on [vscode.dev](https://vscode.dev) too.
+- **Scroll sync** (v0.2.0): scrolling the editor scrolls the preview to the slide and block under it, and the other way round, through templates too: a slide a `{{ range }}` generates follows its template's line, what an `{{ include }}` brings follows the include.
 - **Templates and kinds**: `{{ .data }}`, `{{ page }}/{{ total }}`, `include`; `kind:`/`_kind:` from the built-ins, the front matter, kinds files and `slides.yaml`/`slides.hcl`; `---hcl` front matter. The files a deck uses are read from the workspace.
 - **Problems panel**: template, YAML and HCL errors on their line, in the deck or in the kinds file they come from.
 - **Completion and hover**: directives (spot `_` ones in comments), `kind` values with what they set, themes, size presets, `paginate`, template functions and data fields.
@@ -30,7 +31,7 @@ Files marked `marp: true` are rendered too, unless Marp for VS Code is installed
 The extension is not on the Marketplace yet. Download `go-slides-<version>.vsix` from the [releases](https://github.com/go-slides/vscode/releases) and run *Extensions: Install from VSIX...*, or:
 
 ```sh
-code --install-extension go-slides-0.1.0.vsix
+code --install-extension go-slides-0.2.0.vsix
 ```
 
 Exporting needs the command, Go 1.27 or later:
