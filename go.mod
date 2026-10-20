@@ -4,7 +4,7 @@ go 1.27.2
 
 require (
 	github.com/andybalholm/brotli v1.2.6
-	github.com/go-slides/slides v0.6.1-0.20261020091636-58ed5de9b9a7
+	github.com/go-slides/slides v0.6.1-0.20261020121116-42429e67ec83
 	github.com/spf13/cobra v1.10.2
 )
 
@@ -14,7 +14,7 @@ require (
 	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
 	github.com/go-icons/twemoji v0.1.0 // indirect
 	github.com/go-opentype/opentype v0.16.0 // indirect
-	github.com/go-regexp/engine v0.3.0 // indirect
+	github.com/go-regexp/engine v0.3.2 // indirect
 	github.com/go-rouge/rouge v0.5.0 // indirect
 	github.com/go-ruby-regexp/regexp v0.1.0 // indirect
 	github.com/go-tex/math v0.50.0 // indirect
