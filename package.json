@@ -2,7 +2,7 @@
   "name": "go-slides",
   "displayName": "go-slides",
   "description": "Preview, export and complete go-slides and Marp slide decks: Go templates, slide kinds, HCL front matter; vector PDF, editable PPTX/ODP without a browser",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "go-slides",
   "license": "BSD-3-Clause",
   "repository": {
