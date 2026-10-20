@@ -8,6 +8,8 @@ Preview, check, complete and export [go-slides](https://github.com/go-slides/sli
 - **Completion and hover**: directives (spot `_` ones in comments), `kind` values with what they set, themes, size presets, `paginate`, template functions and data fields.
 - **Export** to HTML, vector PDF, editable PPTX and ODP, PNG and JPEG with the `slides` command (*go-slides: Export Slide Deck...*).
 
+Documentation: [go-slides.github.io/docs/latest/vscode](https://go-slides.github.io/docs/latest/vscode/).
+
 ## Which documents
 
 A Markdown file whose front matter says `slides: true`:

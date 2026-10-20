@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/go-slides/vscode"
   },
-  "homepage": "https://go-slides.github.io/docs/vscode/",
+  "homepage": "https://go-slides.github.io/docs/latest/vscode/",
   "bugs": {
     "url": "https://github.com/go-slides/vscode/issues"
   },

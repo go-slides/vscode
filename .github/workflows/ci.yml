@@ -25,8 +25,12 @@ jobs:
         run: |
           go vet ./...
           GOOS=js GOARCH=wasm go vet ./wasm
-      - name: Test (compiles the WebAssembly module)
-        run: go test -race -cover ./...
+      - name: Test (race)
+        run: go test -race -short -cover ./...
+      # Compiling the module and brotli-compressing 23 MiB at quality 11 is
+      # minutes under the race detector: this one runs without it.
+      - name: Test the WebAssembly module build and its size budget
+        run: go test -timeout 20m -run TestModule -v ./cmd/build
       - name: Govulncheck
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
 
