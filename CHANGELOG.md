@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- Scroll sync between the editor and the preview, both ways, slide by slide and block by block, as VS Code's Markdown preview and Marp for VS Code do it. Lines are traced through templates: a slide a `{{ range }}` generates follows its template's line, an `{{ include }}` its include line. (go-slides after v0.6.0.)
+
 ## 0.1.0
 
 - Preview go-slides decks (`slides: true`) and Marp decks (`marp: true`, unless Marp for VS Code is installed) in VS Code's Markdown preview, rendered by go-slides compiled to WebAssembly: no binary, works on vscode.dev.

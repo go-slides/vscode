@@ -54,6 +54,13 @@ export async function run(): Promise<void> {
   assert.ok(html.includes('Hello World'));
   assert.ok(html.includes('Page 2 of 2'));
   assert.ok(html.includes('lead invert'));
+  // Scroll sync: VS Code's preview maps editor lines to elements marked
+  // class="code-line" data-line="N" (0-based), here the slide frames and
+  // their blocks.
+  const frames = [...html.matchAll(/<svg data-marpit-svg="" viewBox="[^"]*" class="code-line" data-line="(\d+)">/g)].map((m) => +m[1]);
+  assert.deepEqual(frames, [6, 10], 'slide lines');
+  assert.match(html, /<h1[^>]* class="code-line" data-line="7"[^>]*>Hello World/);
+  assert.match(html, /<h1[^>]* class="code-line" data-line="13"[^>]*>Page 2 of 2/);
 
   // A plain Markdown document is left to VS Code.
   const plain = md.render('# just Markdown\n');
