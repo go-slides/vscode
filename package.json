@@ -1,0 +1,155 @@
+{
+  "name": "go-slides",
+  "displayName": "go-slides",
+  "description": "Preview, export and complete go-slides and Marp slide decks: Go templates, slide kinds, HCL front matter; vector PDF, editable PPTX/ODP without a browser",
+  "version": "0.1.0",
+  "publisher": "go-slides",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/go-slides/vscode"
+  },
+  "homepage": "https://go-slides.github.io/docs/vscode/",
+  "bugs": {
+    "url": "https://github.com/go-slides/vscode/issues"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "slides",
+    "marp",
+    "markdown",
+    "presentation",
+    "go"
+  ],
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "main": "./dist/node.js",
+  "browser": "./dist/web.js",
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "The preview, diagnostics and completion work everywhere, with Marp's HTML allowlist. Exporting runs the slides command and needs a trusted workspace; so does allowing all HTML.",
+      "restrictedConfigurations": [
+        "goSlides.html"
+      ]
+    },
+    "virtualWorkspaces": {
+      "supported": "limited",
+      "description": "The preview, diagnostics and completion read the workspace through VS Code; exporting needs files on disk."
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "category": "go-slides",
+        "command": "goSlides.export",
+        "title": "Export Slide Deck...",
+        "enablement": "isWorkspaceTrusted && shellExecutionSupported"
+      },
+      {
+        "category": "go-slides",
+        "command": "goSlides.installCli",
+        "title": "Install the slides Command (go install)",
+        "enablement": "isWorkspaceTrusted && shellExecutionSupported"
+      },
+      {
+        "category": "go-slides",
+        "command": "goSlides.showVersion",
+        "title": "Show Version"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "goSlides.export",
+          "group": "navigation@99",
+          "when": "editorLangId == markdown && isWorkspaceTrusted && shellExecutionSupported"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "go-slides",
+      "properties": {
+        "goSlides.cliPath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "Path of the `slides` command used to export. Empty: `slides` on `PATH`. Machine scope: a workspace cannot set it."
+        },
+        "goSlides.exportType": {
+          "type": "string",
+          "enum": [
+            "html",
+            "pdf",
+            "pptx",
+            "odp",
+            "png",
+            "jpeg"
+          ],
+          "default": "pdf",
+          "description": "The format the export dialog proposes first."
+        },
+        "goSlides.exportAutoOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Open the exported file with the system's default application."
+        },
+        "goSlides.html": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Allow all raw HTML in decks, in the preview and in exports. Off: Marp's allowlist. Only honoured in a trusted workspace; a workspace's `slides.yaml` `html: true` is ignored by the preview."
+        },
+        "goSlides.preview.marpDocuments": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "always",
+            "never"
+          ],
+          "default": "auto",
+          "markdownEnumDescriptions": [
+            "Render `marp: true` decks unless Marp for VS Code is installed (it renders them).",
+            "Always render `marp: true` decks.",
+            "Only render decks with `slides: true`."
+          ],
+          "markdownDescription": "Whether the preview renders decks marked `marp: true`. Decks marked `slides: true` are always rendered."
+        }
+      }
+    },
+    "markdown.markdownItPlugins": true,
+    "markdown.previewScripts": [
+      "./media/preview.js"
+    ],
+    "markdown.previewStyles": [
+      "./media/go-slides-preview.css"
+    ]
+  },
+  "scripts": {
+    "build:go": "go run ./cmd/build",
+    "build:node": "esbuild src/node.ts --bundle --outfile=dist/node.js --format=cjs --platform=node --target=node20 --external:vscode --minify --sourcemap",
+    "build:web": "esbuild src/web.ts --bundle --outfile=dist/web.js --format=cjs --platform=browser --target=es2022 --external:vscode --minify --sourcemap",
+    "build:test": "esbuild src/test/run.ts src/test/suite.ts --bundle --outdir=dist/test --format=cjs --platform=node --target=node20 --external:vscode --external:@vscode/test-electron",
+    "build": "npm run build:go && npm run build:node && npm run build:web",
+    "check": "tsc --noEmit",
+    "test": "npm run build:test && node dist/test/run.js",
+    "package": "vsce package --no-dependencies",
+    "vscode:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "14.1.2",
+    "@types/node": "20.19.9",
+    "@types/vscode": "1.101.0",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "3.6.0",
+    "esbuild": "0.25.8",
+    "markdown-it": "14.1.0",
+    "typescript": "5.8.3"
+  }
+}

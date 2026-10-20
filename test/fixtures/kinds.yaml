@@ -1,0 +1,4 @@
+hero:
+  extends: title
+  class: lead invert
+  footer: from kinds.yaml

@@ -1,0 +1,10 @@
+**
+!package.json
+!README.md
+!LICENSE
+!CHANGELOG.md
+!dist/node.js
+!dist/web.js
+!dist/slides.wasm
+!media/preview.js
+!media/go-slides-preview.css

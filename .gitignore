@@ -1,0 +1,6 @@
+node_modules/
+dist/
+src/gen/
+media/preview.js
+.vscode-test/
+*.vsix

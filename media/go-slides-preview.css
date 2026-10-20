@@ -1,0 +1,13 @@
+/* The Markdown preview around a go-slides deck (media/preview.js sets
+   body.go-slides and turns VS Code's Markdown styles off meanwhile). */
+body.go-slides {
+  margin: 0;
+  padding: 16px;
+  background: var(--vscode-editor-background, #1e1e1e);
+}
+body.go-slides #go-slides-reading,
+body.go-slides #go-slides-error {
+  color: var(--vscode-editor-foreground, #ccc);
+  font-family: var(--vscode-editor-font-family, monospace);
+  white-space: pre-wrap;
+}
