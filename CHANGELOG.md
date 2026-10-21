@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Built on go-slides v0.7.1. The preview after an edit takes 24 ms on a 100-slide deck at Go's default GOGC, level with Marp for VS Code's 23 ms; it took 44 ms with go-slides v0.7.0 at the default and 35 ms with the GOGC=400 override that 0.2.1 set. The first preview takes 52 ms, against Marp's 78 ms. The override is gone: the default now meets the target with a smaller heap.
+
 ## 0.2.1
 
 - Built on go-slides v0.7.0. The preview after an edit is faster: 35 ms instead of 61 ms on a 100-slide deck, because go-regexp/engine v0.3.2 allocates far less while highlighting code. The first preview takes 68 ms instead of 93 ms.
