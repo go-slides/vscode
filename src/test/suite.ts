@@ -123,11 +123,20 @@ export async function run(): Promise<void> {
 /** Renders a deck 15 times through a markdown-it instance; checks it made 100 slides. */
 function time(md: MarkdownIt, doc: vscode.TextDocument, marker: string): { first: number; median: number; min: number } {
   const src = doc.getText();
+  // After the first render, every other one has a character typed at the end
+  // of a paragraph line in the middle of the deck: an edit, as the preview
+  // sees keystrokes, so that neither renderer is timed on unchanged text.
+  let at = src.indexOf('\n', Math.floor(src.length / 2));
+  while (src.slice(0, at).endsWith('---') || src.slice(0, at).endsWith('\n')) {
+    at = src.indexOf('\n', at + 1);
+  }
+  const edited = src.slice(0, at) + 'x' + src.slice(at);
   const times: number[] = [];
   let out = '';
   for (let i = 0; i < 15; i++) {
+    const text = i % 2 === 0 ? src : edited;
     const s = performance.now();
-    out = md.renderer.render(md.parse(src, {}), md.options, { currentDocument: doc.uri });
+    out = md.renderer.render(md.parse(text, {}), md.options, { currentDocument: doc.uri });
     times.push(performance.now() - s);
   }
   const slides = out.split(marker).length - 1;
