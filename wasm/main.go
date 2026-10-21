@@ -17,7 +17,7 @@ func main() {
 	// the preview waits on, but a render of the 100-slide deck allocates
 	// 5.7 MB, and the preview after an edit (24 ms) matches Marp's at the
 	// default. The GOGC=400 override is gone.
-	call :=js.FuncOf(func(_ js.Value, args []js.Value) any {
+	call := js.FuncOf(func(_ js.Value, args []js.Value) any {
 		if len(args) != 2 || args[0].Type() != js.TypeString || args[1].Type() != js.TypeString {
 			return `{"error":"go-slides: call(method, json) takes two strings"}`
 		}
