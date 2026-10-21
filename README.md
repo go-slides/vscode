@@ -65,10 +65,10 @@ Measured by the smoke test in VS Code 1.142 (Apple M4 Max, load below 8) on go-s
 | | go-slides | Marp for VS Code |
 |---|---:|---:|
 | activation (loading the WebAssembly module) | 180 ms | — (already active: both activate on Markdown) |
-| first preview of the deck | 68 ms | 78 ms |
-| preview after an edit (median of 14) | 35 ms | 24 ms |
+| first preview of the deck | 52 ms | 78 ms |
+| preview after an edit (median of 14) | 24 ms | 23 ms |
 
-Four interleaved rounds on 2026-10-20 (load 5.5–7.2), medians. The first preview is now faster than Marp's; the edit latency is still **1.5× Marp's: an open defect**. The regular-expression engine behind code highlighting no longer allocates a table the size of the code block per lookaround, and skips rules that cannot start at the cursor ([go-regexp/engine#10](https://github.com/go-regexp/engine/issues/10), engine v0.3.2), and go-slides' theme packing skips regexps that cannot match: a render allocates 10.9 MB instead of 52.7 MB, and the edit median went from 61 ms to 35 ms. The module still runs with `GOGC=400`: at Go's default it is 44 ms (81 ms before).
+Four interleaved rounds on 2026-10-21 (load 5.9–7.5), medians, at Go's default `GOGC`. The edit latency now matches Marp's (it was 44 ms at the default, 36 ms with the former `GOGC=400` override, which this version drops; with it, 19 ms). go-slides caches parsed themes, packed style sheets and highlighted code between renders, and marks source lines for scroll sync without going byte by byte; earlier, the regular-expression engine behind code highlighting stopped allocating a table the size of the code block per lookaround ([go-regexp/engine#10](https://github.com/go-regexp/engine/issues/10)). A render of the deck allocates 5.7 MB, against 52.7 MB in v0.2.0.
 
 ## How it is built
 
