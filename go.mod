@@ -4,7 +4,7 @@ go 1.27.2
 
 require (
 	github.com/andybalholm/brotli v1.2.6
-	github.com/go-slides/slides v0.7.0
+	github.com/go-slides/slides v0.7.1-0.20261021053018-c2f2d89d1994
 	github.com/spf13/cobra v1.10.2
 )
 
