@@ -65,10 +65,10 @@ Measured by the smoke test in VS Code 1.142 (Apple M4 Max, load below 8) on go-s
 | | go-slides | Marp for VS Code |
 |---|---:|---:|
 | activation (loading the WebAssembly module) | 180 ms | — (already active: both activate on Markdown) |
-| first preview of the deck | 52 ms | 78 ms |
-| preview after an edit (median of 14) | 24 ms | 23 ms |
+| first preview of the deck | 54 ms | 78 ms |
+| preview after an edit (median of 14) | 19 ms | 24 ms |
 
-Four interleaved rounds on 2026-10-21 (load 5.9–7.5), medians, at Go's default `GOGC`. The edit latency now matches Marp's (it was 44 ms at the default, 36 ms with the former `GOGC=400` override, which this version drops; with it, 19 ms). go-slides caches parsed themes, packed style sheets and highlighted code between renders, and marks source lines for scroll sync without going byte by byte; earlier, the regular-expression engine behind code highlighting stopped allocating a table the size of the code block per lookaround ([go-regexp/engine#10](https://github.com/go-regexp/engine/issues/10)). A render of the deck allocates 5.7 MB, against 52.7 MB in v0.2.0.
+Four interleaved rounds on 2026-10-21 (load 5.9–7.4), medians, at Go's default `GOGC`; every other timed render has one character typed into slide 50, so that neither renderer is timed on unchanged text. After an edit go-slides re-renders only the slides whose source or inherited state changed, and reuses the others (`deck.RenderCache`); VS Code's preview then morphs the DOM. v0.2.2 took 24 ms (44 ms in v0.2.1, at the default `GOGC`). go-slides also caches parsed themes, packed style sheets and highlighted code between renders, and marks source lines for scroll sync without going byte by byte; earlier, the regular-expression engine behind code highlighting stopped allocating a table the size of the code block per lookaround ([go-regexp/engine#10](https://github.com/go-regexp/engine/issues/10)). A render of the deck allocates 5.7 MB, against 52.7 MB in v0.2.0.
 
 ## How it is built
 
