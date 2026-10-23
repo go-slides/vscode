@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- Built on go-slides v0.8.0.
+- The preview re-renders only the slides an edit changed. On a 100-slide deck, the preview after an edit takes 19 ms, against 23–24 ms for Marp for VS Code (#7).
+- The preview shows what go-slides v0.8.0 adds:
+  - line numbers on code blocks (```` ```go {lineNumbers} ```` or the `lineNumbers` directive);
+  - code callouts (`// <1>` at a line's end, then a numbered list after the block).
+
 ## 0.2.2
 
 - Built on go-slides v0.7.1. The preview after an edit takes 24 ms on a 100-slide deck at Go's default GOGC, level with Marp for VS Code's 23 ms; it took 44 ms with go-slides v0.7.0 at the default and 35 ms with the GOGC=400 override that 0.2.1 set. The first preview takes 52 ms, against Marp's 78 ms. The override is gone: the default now meets the target with a smaller heap.
