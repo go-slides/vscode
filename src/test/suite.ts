@@ -87,6 +87,66 @@ export async function run(): Promise<void> {
   const hovers = await vscode.commands.executeCommand<vscode.Hover[]>('vscode.executeHoverProvider', deckUri, new vscode.Position(1, 2));
   assert.ok(hovers.some((h) => h.contents.some((c) => (c as vscode.MarkdownString).value?.includes('go-slides'))));
 
+  // The overview and the presenter view: panels beside the editor, running the
+  // viewer's pages in a sandboxed frame, following one another.
+  const commands = await vscode.commands.getCommands(true);
+  assert.ok(commands.includes('goSlides.openOverview') && commands.includes('goSlides.startPresenter'));
+  await vscode.window.showTextDocument(doc);
+  await vscode.commands.executeCommand('goSlides.startPresenter');
+  const talk = await until('the presenter session', () => {
+    const t = api.presenting.talks().find((x) => x.deck === deckUri.toString());
+    // a panel has been sent its page once its shell said ready
+    return t && t.panels.length === 2 && t.panels.every((p) => p.shown > 0) ? t : undefined;
+  });
+  assert.deepEqual(talk.panels.map((p) => p.kind).sort(), ['presenter', 'slides']);
+  for (const p of talk.panels) {
+    assert.match(p.html, /Content-Security-Policy/);
+    assert.match(p.html, /sandbox="allow-scripts"/);
+    assert.doesNotMatch(p.html, /allow-same-origin|unsafe-eval/);
+    assert.ok(p.scripts.length > 0 && p.scripts.every((s) => /^'sha256-[A-Za-z0-9+/]+=*'$/.test(s)), p.scripts.join(' '));
+  }
+  const tabs = vscode.window.tabGroups.all.flatMap((g) => g.tabs).filter((t) => t.input instanceof vscode.TabInputWebview);
+  assert.ok(tabs.length >= 2, 'two panels are open');
+  // what the audience's page reports reaches the presenter's, not back to itself
+  api.presenting.receive(deckUri, 'slides', { type: 'sync', data: { index: 1, fragmentIndex: 0 } });
+  const after = api.presenting.talks().find((x) => x.deck === deckUri.toString())!;
+  assert.deepEqual(after.last, { index: 1, fragmentIndex: 0 });
+  assert.deepEqual(after.panels.find((p) => p.kind === 'presenter')!.at, { index: 1, fragmentIndex: 0 });
+  assert.equal(after.panels.find((p) => p.kind === 'slides')!.at, undefined);
+  // anything else a page says is nothing
+  api.presenting.receive(deckUri, 'slides', { type: 'sync', data: { index: -5, fragmentIndex: 0 } });
+  api.presenting.receive(deckUri, 'slides', 'close');
+  assert.deepEqual(api.presenting.talks()[0].last, { index: 1, fragmentIndex: 0 });
+  // the overview joins the talk; choosing a slide in it moves the editor to the slide
+  await vscode.commands.executeCommand('goSlides.openOverview');
+  await until('the overview', () => {
+    const t = api.presenting.talks().find((x) => x.deck === deckUri.toString());
+    return t && t.panels.length === 3 && t.panels.every((p) => p.shown > 0) ? t : undefined;
+  });
+  const slideAt = await until('the slides to be read', async () => {
+    api.presenting.receive(deckUri, 'overview', { type: 'sync', data: { index: 1, fragmentIndex: 0 } });
+    // a panel has the focus, not the editor: the deck's editor is a visible one
+    const line = vscode.window.visibleTextEditors.find((e) => e.document.uri.toString() === deckUri.toString())?.selection.active.line;
+    return line === 10 ? line : undefined;
+  }).catch(() => undefined);
+  assert.equal(slideAt, 10, 'the overview shows the slide in the editor');
+  // an edit builds the pages again
+  const before = api.presenting.talks()[0].panels.map((p) => p.shown);
+  const edit = new vscode.WorkspaceEdit();
+  edit.insert(deckUri, new vscode.Position(doc.lineCount - 1, 0), '\n');
+  await vscode.workspace.applyEdit(edit);
+  await until('the panels to be sent the edit', () => (api.presenting.talks()[0].panels.every((p, i) => p.shown > before[i]) ? true : undefined));
+  // a talk ends when its last panel is closed
+  await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+  await until('the talk to end', () => (api.presenting.talks().length === 0 ? true : undefined));
+  await vscode.window.showTextDocument(doc);
+  // the commands refuse what is not a deck
+  const plainDoc = await vscode.workspace.openTextDocument({ language: 'markdown', content: '# not a deck\n' });
+  await vscode.window.showTextDocument(plainDoc);
+  await vscode.commands.executeCommand('goSlides.openOverview', plainDoc.uri);
+  assert.equal(api.presenting.talks().length, 0, 'a document that is not a deck has no overview');
+  await vscode.window.showTextDocument(doc);
+
   // Timings on the 100-slide benchmark deck (marp: true).
   const marp = vscode.extensions.getExtension<{ extendMarkdownIt(md: unknown): unknown }>('marp-team.marp-vscode');
   if (marp) {

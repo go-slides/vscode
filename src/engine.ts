@@ -50,6 +50,21 @@ export interface Hover {
   endColumn: number;
 }
 
+/** The views of a presenting page: the slides, the grid of every slide, the speaker's view. */
+export type View = '' | 'overview' | 'presenter';
+
+/** api.PresentResult */
+export interface PresentResult {
+  /** The whole HTML document; empty when the deck did not build. */
+  page: string;
+  /** The 0-based source line of each slide. */
+  lines: number[];
+  /** Content Security Policy sources ("'sha256-…'") of the page's own scripts. */
+  scripts: string[];
+  diagnostics: Diagnostic[];
+  missing: string[] | null;
+}
+
 interface GoSlides {
   call(method: string, json: string): string;
   version: string;
@@ -98,6 +113,11 @@ export class Engine {
 
   render(req: Request): Result {
     return this.call<Result>('render', req);
+  }
+
+  /** The deck as a presenting page that syncs through its parent window (see panel.ts). */
+  present(req: Request, view: View): PresentResult {
+    return this.call<PresentResult>('present', { ...req, view });
   }
 
   complete(req: Request, line: number, character: number): Item[] {
