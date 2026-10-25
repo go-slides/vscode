@@ -4,6 +4,7 @@
 import * as vscode from 'vscode';
 import { Engine, type Item, type Diagnostic as GoDiagnostic } from './engine';
 import { WorkspaceFiles } from './files';
+import { registerPresenting, type PresentingApi } from './presenting';
 
 const marpExtension = 'marp-team.marp-vscode';
 
@@ -22,6 +23,7 @@ export interface Api {
   extendMarkdownIt(md: MarkdownIt): MarkdownIt;
   engine: Engine;
   timings: Timings;
+  presenting: PresentingApi;
 }
 
 // The few markdown-it members this file touches.
@@ -236,8 +238,11 @@ export async function activate(context: vscode.ExtensionContext, platform: Platf
     return md;
   };
 
+  // The overview and the presenter view, as panels beside the editor.
+  const presenting = registerPresenting(context, { engine, files, allowHTML, acceptMarp });
+
   const timings = { activateMs: performance.now() - start, wasmLoadMs: engine.loadMs };
-  return { extendMarkdownIt, engine, timings };
+  return { extendMarkdownIt, engine, timings, presenting };
 }
 
 function escapeHTML(s: string): string {

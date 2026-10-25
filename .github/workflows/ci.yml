@@ -50,10 +50,25 @@ jobs:
         run: npm run check
       - name: Build (WebAssembly module, bundles)
         run: npm run build
-      - name: Smoke test in VS Code (activation, preview, diagnostics, completion, timings)
+      - name: The panels' relay and messages (Node)
+        run: npm run test:unit
+      # The overview and the presenter view's page, in Chrome with the real
+      # engine: the deck's frame under its policy, the viewer's three views, the
+      # messages between the page and the host.
+      - run: npm install --no-save --prefix "$RUNNER_TEMP/pptr" puppeteer-core@24.43.1
+      - name: The panels' page in Chrome (policy, isolation, relay)
+        env:
+          CHROME: /usr/bin/google-chrome
+          NODE_PATH: ${{ runner.temp }}/pptr/node_modules
+        run: npm run test:shell
+      - name: Smoke test in VS Code (activation, preview, panels, diagnostics, completion, timings)
         run: xvfb-run -a npm test
       - name: Package
         run: npm run package
+      - name: The files the package holds (vsce ls)
+        run: npm run ls
+      - name: The package is what the Marketplace and Open VSX need
+        run: go run ./cmd/build verify-vsix ./*.vsix
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: vsix

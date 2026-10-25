@@ -2,9 +2,15 @@
   "name": "go-slides",
   "displayName": "go-slides",
   "description": "Preview, export and complete go-slides and Marp slide decks: Go templates, slide kinds, HCL front matter; vector PDF, editable PPTX/ODP without a browser",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "go-slides",
   "license": "BSD-3-Clause",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1E1B4B",
+    "theme": "dark"
+  },
+  "pricing": "Free",
   "repository": {
     "type": "git",
     "url": "https://github.com/go-slides/vscode"
@@ -15,14 +21,21 @@
   },
   "categories": [
     "Visualization",
+    "Education",
     "Other"
   ],
   "keywords": [
     "slides",
+    "slide deck",
     "marp",
     "markdown",
     "presentation",
-    "go"
+    "presenter view",
+    "pdf",
+    "pptx",
+    "odp",
+    "go",
+    "go-slides"
   ],
   "engines": {
     "vscode": "^1.101.0"
@@ -61,6 +74,18 @@
       },
       {
         "category": "go-slides",
+        "command": "goSlides.openOverview",
+        "title": "Open Overview",
+        "shortTitle": "Overview"
+      },
+      {
+        "category": "go-slides",
+        "command": "goSlides.startPresenter",
+        "title": "Start Presenter View",
+        "shortTitle": "Present"
+      },
+      {
+        "category": "go-slides",
         "command": "goSlides.showVersion",
         "title": "Show Version"
       }
@@ -71,6 +96,26 @@
           "command": "goSlides.export",
           "group": "navigation@99",
           "when": "editorLangId == markdown && isWorkspaceTrusted && shellExecutionSupported"
+        },
+        {
+          "command": "goSlides.openOverview",
+          "group": "1_goSlides@1",
+          "when": "editorLangId == markdown && goSlides.isDeck"
+        },
+        {
+          "command": "goSlides.startPresenter",
+          "group": "1_goSlides@2",
+          "when": "editorLangId == markdown && goSlides.isDeck"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "goSlides.openOverview",
+          "when": "goSlides.isDeck"
+        },
+        {
+          "command": "goSlides.startPresenter",
+          "when": "goSlides.isDeck"
         }
       ]
     },
@@ -136,10 +181,14 @@
     "build:node": "esbuild src/node.ts --bundle --outfile=dist/node.js --format=cjs --platform=node --target=node20 --external:vscode --minify --sourcemap",
     "build:web": "esbuild src/web.ts --bundle --outfile=dist/web.js --format=cjs --platform=browser --target=es2022 --external:vscode --minify --sourcemap",
     "build:test": "esbuild src/test/run.ts src/test/suite.ts --bundle --outdir=dist/test --format=cjs --platform=node --target=node20 --external:vscode --external:@vscode/test-electron",
+    "build:panel": "esbuild src/panel.ts src/session.ts src/test/session.test.ts --bundle --outdir=dist/test --format=cjs --platform=node --target=node20 --out-extension:.js=.cjs",
+    "test:unit": "npm run build:panel && node dist/test/test/session.test.cjs",
+    "test:shell": "npm run build:panel && node test/shell.cjs",
     "build": "npm run build:go && npm run build:node && npm run build:web",
     "check": "tsc --noEmit",
     "test": "npm run build:test && node dist/test/run.js",
     "package": "vsce package --no-dependencies",
+    "ls": "vsce ls --no-dependencies",
     "vscode:prepublish": "npm run build"
   },
   "devDependencies": {

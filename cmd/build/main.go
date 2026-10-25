@@ -60,6 +60,7 @@ func RootCmd() *cobra.Command {
 	f.StringVar(&o.goCmd, "go", "go", "the go command that compiles the module")
 	f.BoolVar(&o.skipWasm, "skip-wasm", false, "write the generated sources only, not dist/slides.wasm")
 	f.Int64Var(&o.maxBrotli, "max-brotli", 0, "fail when the brotli-compressed module exceeds this many bytes (0: no budget)")
+	cmd.AddCommand(verifyCommand())
 	cmd.AddCommand(&cobra.Command{
 		Use:   "measure file...",
 		Short: "Print files' sizes raw, gzipped and brotli-compressed",
@@ -160,6 +161,9 @@ func Measure(b []byte) Sizes {
 	bw.Close()
 	return Sizes{Raw: int64(len(b)), Gzip: int64(g.Len()), Brotli: int64(br.Len())}
 }
+
+// readFile is os.ReadFile, named so that the commands share one reader.
+func readFile(p string) ([]byte, error) { return os.ReadFile(p) }
 
 func mib(n int64) string { return fmt.Sprintf("%.2f MiB", float64(n)/(1<<20)) }
 

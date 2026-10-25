@@ -1,0 +1,106 @@
+name: Publish
+
+# Publishes the extension to the Visual Studio Marketplace and to Open VSX when a
+# release is published. It runs only for a tag (a published release), builds the
+# .vsix from that tag, checks it, and publishes it IF the publisher's tokens are
+# set as repository secrets. Without them it says so in the run's summary and
+# publishes nothing, and the run still passes: the release and the .vsix attached
+# by release.yml do not wait on a publisher account.
+#
+# The tokens (VSCE_PAT for the Marketplace, OVSX_PAT for Open VSX) are created by
+# the maintainer, with the go-slides publisher on each. They are read from the
+# secrets by the publishing step alone, as the environment variables the two
+# tools document, and are never written on a command line or in a file.
+# vsce publish --packagePath and ovsx publish take the packaged file, so the
+# build and the publishing step are separate and the build step has no secret.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The release tag to publish (v0.4.0)"
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  GOWORK: "off"
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - id: tag
+        env:
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          case "$TAG" in v[0-9]*.[0-9]*.[0-9]*) ;; *) echo "::error::not a release tag: $TAG"; exit 1;; esac
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.27.2"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.20.0"
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run package
+      - name: The package is what the listings need
+        run: go run ./cmd/build verify-vsix --tag "${{ steps.tag.outputs.tag }}" ./*.vsix
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: vsix
+          path: "*.vsix"
+          if-no-files-found: error
+
+  marketplace:
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: vsix
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.20.0"
+      # a secret is not readable in an `if:`, so the step that has it says whether it is there
+      - name: Publish to the Visual Studio Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "::notice::VSCE_PAT is not set: nothing was published to the Visual Studio Marketplace."
+            echo "### Marketplace: not published (the VSCE_PAT secret is not set)" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          npx --yes @vscode/vsce@3.6.0 publish --packagePath ./*.vsix
+          echo "### Marketplace: published ${{ needs.package.outputs.tag }}" >> "$GITHUB_STEP_SUMMARY"
+
+  openvsx:
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: vsix
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.20.0"
+      - name: Publish to Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "::notice::OVSX_PAT is not set: nothing was published to Open VSX."
+            echo "### Open VSX: not published (the OVSX_PAT secret is not set)" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          npx --yes ovsx@0.10.5 publish ./*.vsix
+          echo "### Open VSX: published ${{ needs.package.outputs.tag }}" >> "$GITHUB_STEP_SUMMARY"

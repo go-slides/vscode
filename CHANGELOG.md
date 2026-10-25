@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- Built on go-slides v0.9.0. In the preview, hovering or focusing a code callout's number shows its note, and a note its number, with a style sheet and no script (Quarto's code annotations do it with one). A number can take the keyboard's focus and is described by its note.
+- *go-slides: Open Overview* and *go-slides: Start Presenter View*. The overview shows every slide in a grid; choosing one shows its source in the editor. The presenter view opens the slides and the speaker's view (the slide and the next step, the speaker's notes, a timer) in panels beside the editor. The panels of a deck follow one another, follow the deck as it is edited, and the `p` key in the slides opens the presenter view. The slides panel can be moved to the other screen with *View: Move Editor into New Window*.
+- The panels run go-slides' viewer pages under a stricter policy than the preview: each panel is a page that holds the deck in a sandboxed frame without `allow-same-origin` (an opaque origin, no access to VS Code's webview API), loading only images, media, styles and fonts, and running only the scripts go-slides built into the page, named by hash. A script a deck wrote with `goSlides.html` on does not run. The extension host passes between the panels the slide and the step, and nothing else.
+- Ready for the Marketplace and Open VSX: an icon, a gallery banner, categories (Visualization, Education, Other), keywords, a README written for the listing, and a `publish.yml` workflow that publishes on a release when the `VSCE_PAT` and `OVSX_PAT` secrets exist and otherwise says it did not. CI checks the package on every change (`vsce ls`, `vsce package`, and `go run ./cmd/build verify-vsix`: the listing's metadata, the icon, what must not travel in the `.vsix`).
+
 ## 0.3.0
 
 - Built on go-slides v0.8.0.
