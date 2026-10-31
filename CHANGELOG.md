@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+- Built on go-slides v0.14.0 (it was v0.9.0). The preview shows what the engine now draws correctly: `![bg right:N%]` on the right, gaia's inline `code` no longer broken inside its word, percentage padding and margins (`padding-left: 60%`), and a fixed-height block keeping its top margin. `# <!-- fit -->` headings are fitted natively, without JavaScript.
+- Exports through the `slides` command (*go-slides: Export Slide Deck...*) now give an **accessible PDF**: with `slides` v0.12.0 or later, a vector PDF is tagged for screen readers and declares PDF/UA-1, with the deck's `title` and `lang` and a section per slide. `slides --pdf-tags=false` writes the untagged file. Since v0.11.0 theme fonts are fetched on demand, and since v0.14.0 `slides --allowed-host` lets its server answer to a reverse proxy's name. Run *go-slides: Install the slides Command* again to update the command.
+- The extension itself calls no API that changed: the `export` package now takes a `doc.Doc`, but the extension exports by running the command, and its preview uses `deck`, `editor`, `project`, `vfs` and `viewer`, which build and pass their tests unchanged.
+
 ## 0.4.0
 
 - Built on go-slides v0.9.0. In the preview, hovering or focusing a code callout's number shows its note, and a note its number, with a style sheet and no script (Quarto's code annotations do it with one). A number can take the keyboard's focus and is described by its note.

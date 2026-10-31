@@ -8,7 +8,7 @@ Preview, present, check, complete and export [go-slides](https://github.com/go-s
 - **Templates and kinds**: `{{ .data }}`, `{{ page }}/{{ total }}`, `include`; `kind:`/`_kind:` from the built-ins, the front matter, kinds files and `slides.yaml`/`slides.hcl`; `---hcl` front matter. The files a deck uses are read from the workspace.
 - **Problems panel**: template, YAML and HCL errors on their line, in the deck or in the kinds file they come from.
 - **Completion and hover**: directives (spot `_` ones in comments), `kind` values with what they set, themes, size presets, `paginate`, template functions and data fields.
-- **Export** to HTML, vector PDF, editable PPTX and ODP, PNG and JPEG with the `slides` command (*go-slides: Export Slide Deck...*).
+- **Export** to HTML, vector PDF, editable PPTX and ODP, PNG and JPEG with the `slides` command (*go-slides: Export Slide Deck...*). The PDF is **accessible** (v0.5.0, `slides` v0.12.0 or later): tagged for screen readers, PDF/UA-1, with the deck's title and language.
 
 Documentation: [go-slides.github.io/docs/latest/vscode](https://go-slides.github.io/docs/latest/vscode/).
 
@@ -45,7 +45,7 @@ Keys in the slides: `→` `↓` `Space` `Enter` next, `←` `↑` `Backspace` pr
 Download `go-slides-<version>.vsix` from the [releases](https://github.com/go-slides/vscode/releases) and run *Extensions: Install from VSIX...*, or:
 
 ```sh
-code --install-extension go-slides-0.4.0.vsix
+code --install-extension go-slides-0.5.0.vsix
 ```
 
 Requires VS Code 1.101 or later. Exporting needs the command, Go 1.27 or later:
