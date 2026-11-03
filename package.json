@@ -199,6 +199,6 @@
     "@vscode/vsce": "3.6.0",
     "esbuild": "0.25.8",
     "markdown-it": "14.1.0",
-    "typescript": "5.8.3"
+    "typescript": "7.0.2"
   }
 }
