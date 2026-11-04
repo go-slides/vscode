@@ -1,10 +1,10 @@
 module github.com/go-slides/vscode
 
-go 1.27.2
+go 1.27.3
 
 require (
-	github.com/andybalholm/brotli v1.2.6
-	github.com/go-slides/slides v0.14.0
+	github.com/andybalholm/brotli v1.2.8
+	github.com/go-slides/slides v0.16.0
 	github.com/spf13/cobra v1.10.2
 )
 
@@ -12,8 +12,9 @@ require (
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
+	github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707 // indirect
 	github.com/go-icons/twemoji v0.1.0 // indirect
-	github.com/go-opentype/opentype v0.16.0 // indirect
+	github.com/go-opentype/opentype v0.16.2-0.20261027113239-5e69589e9a5e // indirect
 	github.com/go-regexp/engine v0.3.2 // indirect
 	github.com/go-rouge/rouge v0.5.0 // indirect
 	github.com/go-ruby-regexp/regexp v0.1.0 // indirect
@@ -26,7 +27,7 @@ require (
 	github.com/zclconf/go-cty v1.19.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/mod v0.41.0 // indirect
-	golang.org/x/net v0.61.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/sync v0.24.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 	golang.org/x/tools v0.51.0 // indirect
