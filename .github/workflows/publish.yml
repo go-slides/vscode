@@ -48,7 +48,7 @@ jobs:
           go-version: '1.27.3'
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22.20.0"
+          node-version: "26.13.1"
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run package
@@ -69,7 +69,7 @@ jobs:
           name: vsix
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22.20.0"
+          node-version: "26.13.1"
       # a secret is not readable in an `if:`, so the step that has it says whether it is there
       - name: Publish to the Visual Studio Marketplace
         env:
@@ -92,7 +92,7 @@ jobs:
           name: vsix
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22.20.0"
+          node-version: "26.13.1"
       - name: Publish to Open VSX
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
