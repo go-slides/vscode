@@ -45,7 +45,7 @@ Keys in the slides: `→` `↓` `Space` `Enter` next, `←` `↑` `Backspace` pr
 Download `go-slides-<version>.vsix` from the [releases](https://github.com/go-slides/vscode/releases) and run *Extensions: Install from VSIX...*, or:
 
 ```sh
-code --install-extension go-slides-0.5.0.vsix
+code --install-extension go-slides-0.6.0.vsix
 ```
 
 Requires VS Code 1.101 or later. Exporting needs the command, Go 1.27 or later:
