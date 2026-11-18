@@ -84,7 +84,10 @@ export class Engine {
     const bytes = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(extensionUri, 'dist', 'slides.wasm'));
     const GoClass = (globalThis as unknown as { Go: new () => GoRuntime }).Go;
     const go = new GoClass();
-    const { instance } = await WebAssembly.instantiate(bytes, go.importObject);
+    // readFile's Uint8Array is typed over ArrayBufferLike, which TypeScript 5.9
+    // and later no longer take for a BufferSource (it would pick the overload
+    // for a compiled Module); it is a plain ArrayBuffer view here.
+    const { instance } = await WebAssembly.instantiate(bytes as BufferSource, go.importObject);
     // run returns when the Go program exits, which it never does: by the
     // time run has returned its promise, main has set globalThis.goSlides.
     void go.run(instance);

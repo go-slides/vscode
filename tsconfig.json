@@ -8,6 +8,7 @@
     "allowJs": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "noUncheckedSideEffectImports": false,
     "types": ["node", "vscode"]
   },
   "include": ["src/**/*.ts"]
