@@ -34,7 +34,14 @@ interface Token {
 interface MarkdownIt {
   parse(src: string, env: unknown): Token[];
   renderer: { render(tokens: Token[], options: unknown, env: unknown): string };
-  core: { State: { prototype: { Token: new (type: string, tag: string, nesting: number) => Token } } };
+  core: { State: TokenHolder & (new (src: string, md: unknown, env: unknown) => TokenHolder) };
+}
+type TokenConstructor = new (type: string, tag: string, nesting: number) => Token;
+// markdown-it 14 keeps its Token class on State.prototype, markdown-it 15 on
+// each State instance.
+interface TokenHolder {
+  prototype?: { Token?: TokenConstructor };
+  Token?: TokenConstructor;
 }
 
 function config() {
@@ -204,7 +211,7 @@ export async function activate(context: vscode.ExtensionContext, platform: Platf
   const extendMarkdownIt = (md: MarkdownIt): MarkdownIt => {
     const parse = md.parse.bind(md);
     const render = md.renderer.render.bind(md.renderer);
-    const TokenClass = md.core.State.prototype.Token;
+    const TokenClass = (md.core.State.prototype?.Token ?? new md.core.State('', md, {}).Token) as TokenConstructor;
     md.parse = (src, env) => {
       const tokens = parse(src, env);
       if (engine.detect(src, acceptMarp())) {

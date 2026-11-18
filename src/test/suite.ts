@@ -6,6 +6,10 @@ import * as vscode from 'vscode';
 import MarkdownIt from 'markdown-it';
 import type { Api } from '../extension';
 
+// markdown-it 15 ships its own typings, where MarkdownIt is a constant and no
+// longer a class: the instance type is read from the constructor.
+type Md = InstanceType<typeof MarkdownIt>;
+
 const fixture = (name: string) => vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, name);
 
 async function until<T>(what: string, f: () => T | undefined | Promise<T | undefined>, ms = 20_000): Promise<T> {
@@ -39,7 +43,7 @@ export async function run(): Promise<void> {
   const deckUri = fixture('deck.md');
   const doc = await vscode.workspace.openTextDocument(deckUri);
   await vscode.window.showTextDocument(doc);
-  const md = api.extendMarkdownIt(new MarkdownIt({ html: true }) as never) as unknown as MarkdownIt;
+  const md = api.extendMarkdownIt(new MarkdownIt({ html: true }) as never) as unknown as Md;
   const env = () => ({ currentDocument: deckUri });
   const renderDeck = () => md.renderer.render(md.parse(doc.getText(), {}), md.options, env());
   // The first pass asks for slides.yaml, which names kinds.yaml: both are
@@ -169,7 +173,7 @@ export async function run(): Promise<void> {
     const m0 = performance.now();
     const marpApi = await marp.activate();
     timings.marpActivateWallMs = Math.round(performance.now() - m0);
-    const marpMd = marpApi.extendMarkdownIt(new MarkdownIt({ html: true })) as MarkdownIt;
+    const marpMd = marpApi.extendMarkdownIt(new MarkdownIt({ html: true })) as Md;
     const theirs = time(marpMd, bench, '<svg data-marpit-svg');
     const again = time(md, bench, '<svg data-marpit-svg');
     timings.marpPreviewFirstMs = theirs.first;
@@ -181,7 +185,7 @@ export async function run(): Promise<void> {
 }
 
 /** Renders a deck 15 times through a markdown-it instance; checks it made 100 slides. */
-function time(md: MarkdownIt, doc: vscode.TextDocument, marker: string): { first: number; median: number; min: number } {
+function time(md: Md, doc: vscode.TextDocument, marker: string): { first: number; median: number; min: number } {
   const src = doc.getText();
   // After the first render, every other one has a character typed at the end
   // of a paragraph line in the middle of the deck: an edit, as the preview
