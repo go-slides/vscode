@@ -3,7 +3,7 @@ module github.com/go-slides/vscode
 go 1.27.4
 
 require (
-	github.com/andybalholm/brotli v1.2.8
+	github.com/andybalholm/brotli v1.3.0
 	github.com/go-slides/slides v0.26.1
 	github.com/spf13/cobra v1.10.2
 )
