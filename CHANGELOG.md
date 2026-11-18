@@ -2,7 +2,7 @@
 
 ## 0.6.0
 
-- Built on go-slides v0.26.1 (it was v0.14.0): twelve engine releases of rendering fixes and speed-ups reach the preview. The extension itself calls no API that changed: `go vet`, `go test` and the WebAssembly module's size-budget test pass unchanged.
+- Built on go-slides v0.26.1 (it was v0.14.0): the rendering fixes and speed-ups of nineteen go-slides releases (v0.15.0 to v0.26.1, twelve minor and seven patch releases) reach the preview. The extension itself calls no API that changed: `go vet`, `go test` and the WebAssembly module's size-budget test pass unchanged.
 - CI and the release workflows build with Go 1.27.4. The 1.27.3 standard library was flagged by govulncheck (GO-2026-6859, `net/http`), which turned the `go` job red on every branch; the preview engine's brotli moves to v1.2.8 (GO-2026-6888 is fixed in v1.2.7).
 
 ## 0.5.0
